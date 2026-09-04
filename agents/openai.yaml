@@ -1,0 +1,4 @@
+interface:
+  display_name: "RmlUi UI"
+  short_description: "RmlUi画面を設計・実装し、UI崩れを実機検証する"
+  default_prompt: "Use $rmlui-ui to implement and visually verify this RmlUi interface without layout regressions."
