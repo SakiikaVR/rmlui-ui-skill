@@ -5,9 +5,9 @@ Use the smallest matrix that covers the changed invariant, then broaden it when 
 ## Before editing
 
 1. Reproduce the problem in the real executable.
-2. Record window client size, display scale, active page, project/content state, and input sequence.
-3. Capture the whole window. Treat a user-provided crop as evidence of the defect, not as the only area that may be affected.
-4. Inspect RmlUi log output. In a development build, enable the Debugger plugin and use element outlines/element info when available.
+2. Record window client size, display scale, active page, project/content state, input sequence, owning process/window, and rendering path (RmlUi, native host drawing, or plug-in owned).
+3. Capture the whole window. Treat a user-provided crop as evidence of the defect, not as the only area that may be affected. Search an exact visible label before assuming which renderer produced it.
+4. Inspect RmlUi log output when RmlUi owns the surface. In a development build, enable the Debugger plugin and use element outlines/element info when available. For native host drawing, inspect the selected font, quality, DPI source, and GDI object lifetime instead.
 
 For a browser/RmlUi parity harness, keep the semantic element tree and main stylesheet single-sourced. Browser-only compatibility rules are acceptable for syntax RmlUi intentionally differs on, but do not maintain two independent mock-ups and call their visual similarity a parity test.
 
@@ -33,6 +33,7 @@ Recommended broad matrix when practical: 1280x720, 1600x900, and 1920x1080 at 10
 - Type into every changed input; focus and caret must survive unrelated periodic updates.
 - Scroll to both extremes and confirm fixed headers, ruler labels, keys, lanes, notes, grid, and overlays remain aligned.
 - Open and close menus, dialogs, and independent VST windows. Check z-order, focus return, and clipping at window edges.
+- For custom-painted native windows, exercise every tab that uses host drawing as well as the plug-in-owned GUI. Verify ASCII, Japanese, and numeric labels use the intended explicit font rather than a stock DC font.
 - Populate enough tracks/strips/parameters to force each intended scrollbar. Confirm controls do not compress below usable size.
 - For every one-axis scroller, force overflow on the intended axis and assert that the cross axis does not gain a scrollbar.
 
@@ -44,6 +45,7 @@ Inspect the whole image at native resolution, then zoom into:
 - the gap between bottom-anchored auxiliary lanes (such as velocity) and the horizontal scrollbar or viewport edge;
 - boundaries between fixed and scrolling areas;
 - Japanese glyph edges and text baselines;
+- native companion-window labels at original resolution, especially dynamic parameter names that do not exist as source literals;
 - mixed toolbar rows where plain labels, buttons, numeric fields, and icons must share one visual center;
 - clipped/ellipsized labels;
 - slider thumbs, meter bars, one-pixel grid lines, and the playhead;

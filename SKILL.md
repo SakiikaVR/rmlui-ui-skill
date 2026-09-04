@@ -15,7 +15,7 @@ Build RmlUi interfaces whose structure, appearance, state, and interaction remai
 
 ## Working method
 
-1. Inspect the loaded RML, every linked RCSS file in cascade order, the C++ code that mutates the document, renderer dimensions, and the supplied screenshot. Do not diagnose from one stylesheet alone.
+1. Inspect the loaded RML, every linked RCSS file in cascade order, the C++ code that mutates the document, renderer dimensions, and the supplied screenshot. Locate an exact visible label when possible and identify whether RmlUi, host-native drawing, or a plug-in-owned surface renders it before changing RCSS. Do not diagnose from one stylesheet alone.
 2. State the layout invariants that must survive resizing: fixed chrome, flexible work area, scroll ownership, minimum usable sizes, overlay coordinate space, and text truncation.
 3. Keep responsibilities explicit:
    - RML owns semantic structure and stable IDs/classes.

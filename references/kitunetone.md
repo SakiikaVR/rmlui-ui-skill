@@ -6,6 +6,7 @@ Read current repository files before acting; this reference records invariants, 
 
 - Keep the main DAW UI on RmlUi and keep the production application free of JUCE unless the user explicitly changes that decision. JUCE may be used only in isolated validation when authorized.
 - Keep native VST3 editors in independent host windows. Their GUI/MIDI/parameter navigation belongs to that independent window; the DAW page provides an entry point rather than embedding a fake plug-in editor.
+- Treat the independent VST3 window as two rendering surfaces: plug-in-owned GUI content and KituneTone-owned native GUI/MIDI/parameter chrome. Do not attribute text in the latter to RmlUi.
 - Preserve Windows Explorer-style native open/save/export dialogs.
 - Use the bundled LINE Seed JP faces for the main UI and verify Japanese coverage/fallback behavior before document load.
 - Arrange supports audio and MIDI clips, a grid, snap choices, horizontal scrolling, and a full-height draggable playhead.
@@ -19,6 +20,7 @@ Read current repository files before acting; this reference records invariants, 
 - the RmlUi backend for resize, framebuffer, scissor, DPI, and input conversion;
 - `docs/RMLUI_DAW_SPEC.md` and release/implementation notes for accepted behavior;
 - VST process/runtime files when an RmlUi control opens or routes an independent VST window.
+- `src/vst3_runtime.cpp` and `app/vst3_host_worker.cpp` when diagnosing independent-window fonts, DPI, tabs, parameters, or process-local resources.
 - `ui/design_lab/`, `app/rmlui_design_lab.cpp`, and `scripts/test_rmlui_design_lab.ps1` when changing shared shell, arrange, piano, or mixer layout behavior.
 
 Do not assume a rule in the last-linked override is the whole design. Trace cascade conflicts back to their source. Prefer consolidating a stable rule into a clear page stylesheet when doing so is within scope.
@@ -65,4 +67,4 @@ In addition to the general verification reference:
 - Confirm the velocity lane stays immediately above the horizontal scrollbar at every tested height, while the synchronized key/note grid—not blank space below velocity—absorbs vertical resizing.
 - Confirm time text does not blink during scrubbing or playback.
 - Confirm Japanese text is crisp at the active Windows scale.
-- Confirm the independent VST window presents GUI, MIDI, and parameter views without destabilizing the host process.
+- Confirm the independent VST window presents GUI, MIDI, and parameter views without destabilizing the host process. KituneTone-painted tabs, dynamic parameter names, and values must use an explicit DPI-sized LINE Seed JP font with ClearType-quality rendering; the worker process must register its own private font resource and fall back explicitly if loading fails.

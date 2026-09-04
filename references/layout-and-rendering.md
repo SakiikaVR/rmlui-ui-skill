@@ -78,6 +78,7 @@ During a drag, capture the pointer if the backend supports it, retain a drag-ses
 
 ## DPI and crisp text
 
+- Identify the rendering owner before changing font code. Search for an exact label from the screenshot and trace dynamic labels to their painter. A crop from a native companion window or plug-in editor is not evidence of an RmlUi/FreeType defect.
 - Load the intended regular/bold/italic files explicitly before document loading and verify each file contains the required Japanese glyphs.
 - Match `font-weight` to a face that was actually loaded. Do not synthesize weight by scaling or drawing twice.
 - Use the family name recognized by RmlUi and remember that RCSS does not accept a comma-separated fallback chain.
@@ -85,6 +86,8 @@ During a drag, capture the pointer if the backend supports it, retain a drag-ses
 - Render text at its final scale. Avoid rendering the whole UI to a small texture and enlarging it.
 - Prefer integral logical positions for small text and hairlines when animation does not require sub-pixel motion.
 - Use `dp` for scalable controls and spacing. Keep timeline pixels-per-beat in one explicit application coordinate system; convert at its boundary rather than mixing `dp` and `px` ad hoc.
+- In a custom-painted Win32 companion window, never rely on the DC stock font. Register a bundled face from a module-relative path with `AddFontResourceExW(..., FR_PRIVATE, ...)`, create an explicit DPI-sized `HFONT` with `CreateFontW` and `CLEARTYPE_NATURAL_QUALITY`, select and restore it around painting, delete it during teardown, and recreate it on `WM_DPICHANGED`. Use an explicit system-family fallback when private registration fails.
+- Private GDI font registration is process-local. Sandboxed or worker executables that paint their own chrome must each register the face; loading it in the RmlUi host process does not make it available to another process.
 
 ## Styling discipline
 
