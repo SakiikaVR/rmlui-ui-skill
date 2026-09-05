@@ -32,6 +32,7 @@ Recommended broad matrix when practical: 1280x720, 1600x900, and 1920x1080 at 10
 - Scrub the ruler by holding the mouse and moving both slowly and quickly. The playhead and time display must move continuously without text blinking.
 - Drag notes/clips across grid boundaries, resize them, scroll while editing if supported, and verify snapping uses musical coordinates.
 - After every drag or scrub, release inside and outside the window, then send an additional mouse move. Geometry must remain unchanged after release, and any auditioned note must have received Note Off.
+- For controls with semantic cursors, verify the native cursor at four points: hover on the handle, drag after leaving the handle, immediately after release over a non-handle area, and after one additional mouse move. On Windows, `GetCursorInfo` compared with `LoadCursor` handles can distinguish `IDC_SIZEWE`, `IDC_SIZENS`, `IDC_SIZEALL`, and `IDC_ARROW` without relying on screenshots.
 - Exercise modifier-wheel zoom over both the timeline canvas and the visible percentage label. Confirm one wheel step changes the percentage once, preserves the intended cursor-centered anchor, and plain wheel retains its scrolling behavior.
 - Type into every changed input; focus and caret must survive unrelated periodic updates.
 - Scroll to both extremes and confirm fixed headers, ruler labels, keys, lanes, notes, grid, and overlays remain aligned.

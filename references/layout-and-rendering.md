@@ -76,6 +76,10 @@ For rapidly changing playback position or meters, update stable element properti
 
 During a drag, capture the pointer if the backend supports it, retain a drag-session record, update continuously from mouse movement, and release on button-up/cancel/focus loss. Snap musical values after coordinate conversion; do not snap raw screen pixels.
 
+Treat the RCSS `cursor` value as a platform request, not proof that the native cursor changed. Inspect the active `SystemInterface::SetMouseCursor` implementation: example backends may recognize only a small name set and silently ignore directional names such as `ew-resize` or `ns-resize`. When the application needs additional names, prefer an application-owned system-interface wrapper that delegates time, clipboard, and keyboard behavior while mapping directional requests to native cursors; avoid carrying an unpushable edit in a vendor submodule.
+
+If a gesture locks its resize or move cursor while pointer capture is active, release must not restore the cursor cached at drag start. That cached request can still describe the ruler or resize handle after the pointer has moved elsewhere. Clear the lock to a safe default, then asynchronously re-submit the current client pointer position so RmlUi re-hit-tests the element under the release point. Avoid re-entering pointer dispatch synchronously from inside the mouse-up handler.
+
 Register high-priority wheel behavior on the smallest stable element that visibly owns it, such as a zoom percentage label, when a scrolling ancestor may consume the same event. Stop propagation after handling so a target listener and a document fallback cannot apply the operation twice. Keep the document-level path for wheel input over the canvas, and test both targets with the required modifier held.
 
 Treat interaction-state classes as complete geometry combinations. A structural variant such as a narrow black piano key can keep its narrow resting width, while an `.active` state may need to fill the whole keyboard hit area. Declare the combined state explicitly and audit the active rectangle; a resting-state screenshot cannot prove pressed geometry.

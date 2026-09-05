@@ -12,6 +12,7 @@ Read current repository files before acting; this reference records invariants, 
 - Arrange supports audio and MIDI clips, a grid, snap choices, horizontal scrolling, and a full-height draggable playhead.
 - Piano roll supports usable pitch/time navigation, note creation/selection/move/resize, velocity editing, snapping, and stable playback display.
 - Piano note length is edited from a visible right-edge handle; right-click deletes a note. Pitch movement auditions only on semitone transitions and always stops on release/capture loss.
+- Directional RCSS cursors are translated by KituneTone's application-owned Win32 system-interface layer because the bundled example backend does not handle every CSS cursor name. Resize/move cursor locks last through pointer capture, then reset and re-hit-test the release position so a ruler cursor cannot remain active outside the ruler.
 - A pressed black key expands to the full keyboard interaction width so the active fill is not clipped to the resting black-key cap.
 - Track rows remain compact but controls must not overlap. Mixer strips scroll instead of collapsing.
 - Arrange keeps the selected track's live L/R meter below its volume control and updates only the meter fills/value.
