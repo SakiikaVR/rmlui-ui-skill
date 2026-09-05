@@ -76,6 +76,10 @@ For rapidly changing playback position or meters, update stable element properti
 
 During a drag, capture the pointer if the backend supports it, retain a drag-session record, update continuously from mouse movement, and release on button-up/cancel/focus loss. Snap musical values after coordinate conversion; do not snap raw screen pixels.
 
+Register high-priority wheel behavior on the smallest stable element that visibly owns it, such as a zoom percentage label, when a scrolling ancestor may consume the same event. Stop propagation after handling so a target listener and a document fallback cannot apply the operation twice. Keep the document-level path for wheel input over the canvas, and test both targets with the required modifier held.
+
+Treat interaction-state classes as complete geometry combinations. A structural variant such as a narrow black piano key can keep its narrow resting width, while an `.active` state may need to fill the whole keyboard hit area. Declare the combined state explicitly and audit the active rectangle; a resting-state screenshot cannot prove pressed geometry.
+
 ## DPI and crisp text
 
 - Identify the rendering owner before changing font code. Search for an exact label from the screenshot and trace dynamic labels to their painter. A crop from a native companion window or plug-in editor is not evidence of an RmlUi/FreeType defect.
@@ -88,6 +92,7 @@ During a drag, capture the pointer if the backend supports it, retain a drag-ses
 - Use `dp` for scalable controls and spacing. Keep timeline pixels-per-beat in one explicit application coordinate system; convert at its boundary rather than mixing `dp` and `px` ad hoc.
 - In a custom-painted Win32 companion window, never rely on the DC stock font. Register a bundled face from a module-relative path with `AddFontResourceExW(..., FR_PRIVATE, ...)`, create an explicit DPI-sized `HFONT` with `CreateFontW` and `CLEARTYPE_NATURAL_QUALITY`, select and restore it around painting, delete it during teardown, and recreate it on `WM_DPICHANGED`. Use an explicit system-family fallback when private registration fails.
 - Private GDI font registration is process-local. Sandboxed or worker executables that paint their own chrome must each register the face; loading it in the RmlUi host process does not make it available to another process.
+- For a custom-painted native companion window, centralize DPI-scaled rectangles and row metrics and reuse them for paint, hit testing, child placement, scrolling bounds, and `WM_GETMINMAXINFO`. Parameter rows should reserve bounded name/value space on one line and put the slider on a separate line; ellipsize long names rather than letting them cross the value or slider.
 
 ## Styling discipline
 
@@ -108,6 +113,8 @@ During a drag, capture the pointer if the backend supports it, retain a drag-ses
 - Mixer strips have a fixed readable width; the strip viewport scrolls horizontally instead of compressing labels, buttons, meters, and faders into overlap.
 - Meters update existing bars only. Layout and text nodes remain stable during audio callbacks.
 - Native VST editor windows remain independent platform windows. RmlUi may control their launch/routing UI but must not fake or reparent plug-in views unless the host architecture explicitly supports it.
+- A looped arrangement clip needs two explicit extents: editable source-pattern length and visible arrangement length. Derive preview repetitions, resize handles, audio/MIDI scheduling, end-of-project calculation, validation, and persistence from that same pair. Clamp the final repeated note at the visible clip end to prevent stuck notes.
+- Pitch-drag audition is a state transition: when the quantized pitch changes, send Note Off for the old pitch before Note On for the new pitch. Run the same cleanup on pointer up, capture loss, cancel, and focus loss.
 
 ## Authoritative documentation
 

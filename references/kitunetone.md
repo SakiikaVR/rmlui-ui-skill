@@ -11,7 +11,12 @@ Read current repository files before acting; this reference records invariants, 
 - Use the bundled LINE Seed JP faces for the main UI and verify Japanese coverage/fallback behavior before document load.
 - Arrange supports audio and MIDI clips, a grid, snap choices, horizontal scrolling, and a full-height draggable playhead.
 - Piano roll supports usable pitch/time navigation, note creation/selection/move/resize, velocity editing, snapping, and stable playback display.
+- Piano note length is edited from a visible right-edge handle; right-click deletes a note. Pitch movement auditions only on semitone transitions and always stops on release/capture loss.
+- A pressed black key expands to the full keyboard interaction width so the active fill is not clipped to the resting black-key cap.
 - Track rows remain compact but controls must not overlap. Mixer strips scroll instead of collapsing.
+- Arrange keeps the selected track's live L/R meter below its volume control and updates only the meter fills/value.
+- MIDI clips store source loop length separately from Arrange length. New clips match note content; extending the Arrange edge repeats preview and playback rather than stretching note data.
+- The visible Arrange/Piano percentage labels directly own Ctrl+wheel zoom while the document listener covers the rest of each editor.
 
 ## Files to inspect together
 
@@ -64,7 +69,10 @@ In addition to the general verification reference:
 - Confirm the red arrange playhead reaches the intended bottom edge and moves smoothly while dragging.
 - Confirm selected MIDI clips remain visible in Arrange and open the corresponding piano content.
 - Confirm piano notes, keyboard rows, ruler, velocity bars, and playhead agree after zoom/scroll.
+- Confirm active black keys fill the keyboard width, short notes retain a usable resize handle, right-click deletes exactly one note, and pitch drag does not leave a live note sounding.
 - Confirm the velocity lane stays immediately above the horizontal scrollbar at every tested height, while the synchronized key/note grid—not blank space below velocity—absorbs vertical resizing.
 - Confirm time text does not blink during scrubbing or playback.
 - Confirm Japanese text is crisp at the active Windows scale.
 - Confirm the independent VST window presents GUI, MIDI, and parameter views without destabilizing the host process. KituneTone-painted tabs, dynamic parameter names, and values must use an explicit DPI-sized LINE Seed JP font with ClearType-quality rendering; the worker process must register its own private font resource and fall back explicitly if loading fails.
+- Confirm the VST MIDI tab stages numeric PORT and CH 1-16 selections until Connect, Clear removes the route, and the saved project/IPC values agree. Confirm the topmost toggle changes z-order and remains active across editor recreation.
+- Confirm parameter rows keep the name/value line above a separate slider at minimum size and non-100% DPI; long names must ellipsize rather than overlap.

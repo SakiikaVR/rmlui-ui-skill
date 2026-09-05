@@ -18,6 +18,7 @@ For a shared DAW layout change, inspect at least:
 - Arrange, piano roll, mixer, and any modified modal/popup;
 - empty project and representative populated project;
 - no selection and selected/active/hovered controls;
+- resting and combined interaction states whose geometry differs, such as a pressed black key or selected resize handle;
 - playback stopped and playing;
 - timeline/playhead at the start and after horizontal scrolling;
 - short ASCII labels and long Japanese labels;
@@ -30,10 +31,15 @@ Recommended broad matrix when practical: 1280x720, 1600x900, and 1920x1080 at 10
 
 - Scrub the ruler by holding the mouse and moving both slowly and quickly. The playhead and time display must move continuously without text blinking.
 - Drag notes/clips across grid boundaries, resize them, scroll while editing if supported, and verify snapping uses musical coordinates.
+- After every drag or scrub, release inside and outside the window, then send an additional mouse move. Geometry must remain unchanged after release, and any auditioned note must have received Note Off.
+- Exercise modifier-wheel zoom over both the timeline canvas and the visible percentage label. Confirm one wheel step changes the percentage once, preserves the intended cursor-centered anchor, and plain wheel retains its scrolling behavior.
 - Type into every changed input; focus and caret must survive unrelated periodic updates.
 - Scroll to both extremes and confirm fixed headers, ruler labels, keys, lanes, notes, grid, and overlays remain aligned.
 - Open and close menus, dialogs, and independent VST windows. Check z-order, focus return, and clipping at window edges.
 - For custom-painted native windows, exercise every tab that uses host drawing as well as the plug-in-owned GUI. Verify ASCII, Japanese, and numeric labels use the intended explicit font rather than a stock DC font.
+- Resize custom-painted native windows to their declared minimum and inspect them at a non-100% DPI scale. Parameter names, values, sliders, tab controls, and topmost controls must use the same scaled geometry for rendering and hit testing.
+- For staged routing controls, change the draft port/channel without applying it, then test Connect, Clear, persistence, and process-boundary IPC. The visible applied status must agree with the audio/MIDI routing model.
+- Extend a loop clip beyond one source-pattern length and verify the repeated preview and emitted Note On/Off sequence. Shorten through the final note and verify the clip boundary produces Note Off.
 - Populate enough tracks/strips/parameters to force each intended scrollbar. Confirm controls do not compress below usable size.
 - For every one-axis scroller, force overflow on the intended axis and assert that the cross axis does not gain a scrollbar.
 
@@ -49,6 +55,7 @@ Inspect the whole image at native resolution, then zoom into:
 - mixed toolbar rows where plain labels, buttons, numeric fields, and icons must share one visual center;
 - clipped/ellipsized labels;
 - slider thumbs, meter bars, one-pixel grid lines, and the playhead;
+- resize-handle hit areas and loop-boundary markers at native resolution;
 - popup/modal edges and overlays;
 - the first, middle, and last visible track/strip.
 
