@@ -18,6 +18,8 @@ Read current repository files before acting; this reference records invariants, 
 - Arrange keeps the selected track's live L/R meter below its volume control and updates only the meter fills/value.
 - MIDI clips store source loop length separately from Arrange length. New clips match note content; extending the Arrange edge repeats preview and playback rather than stretching note data.
 - The visible Arrange/Piano percentage labels directly own Ctrl+wheel zoom while the document listener covers the rest of each editor.
+- The VST topmost control is an inline SVG pin in KituneTone's RmlUi chrome. It has a definite square hit target, stays gray when off, and turns yellow when active.
+- The VST worker handles audio IPC on a dedicated high-priority thread separate from RmlUi/DX11 event, render, and present work. Manual parameter delivery must remain non-blocking and retain changes for a later block if the audio side cannot acquire them immediately.
 
 ## Files to inspect together
 
@@ -26,7 +28,7 @@ Read current repository files before acting; this reference records invariants, 
 - the RmlUi backend for resize, framebuffer, scissor, DPI, and input conversion;
 - `docs/RMLUI_DAW_SPEC.md` and release/implementation notes for accepted behavior;
 - VST process/runtime files when an RmlUi control opens or routes an independent VST window.
-- `src/vst3_runtime.cpp` and `app/vst3_host_worker.cpp` when diagnosing independent-window fonts, DPI, tabs, parameters, or process-local resources.
+- `src/vst3_runtime.cpp`, `app/vst3_host_worker.cpp`, `src/winmm_output.cpp`, and `app/vst3_process_probe.cpp` when diagnosing independent-window fonts, DPI, tabs, parameters, process-local resources, or GUI-triggered audio gaps.
 - `ui/design_lab/`, `app/rmlui_design_lab.cpp`, and `scripts/test_rmlui_design_lab.ps1` when changing shared shell, arrange, piano, or mixer layout behavior.
 
 Do not assume a rule in the last-linked override is the whole design. Trace cascade conflicts back to their source. Prefer consolidating a stable rule into a clear page stylesheet when doing so is within scope.
@@ -77,3 +79,5 @@ In addition to the general verification reference:
 - Confirm the independent VST window presents GUI, MIDI, and parameter views without destabilizing the host process. KituneTone-painted tabs, dynamic parameter names, and values must use an explicit DPI-sized LINE Seed JP font with ClearType-quality rendering; the worker process must register its own private font resource and fall back explicitly if loading fails.
 - Confirm the VST MIDI tab stages numeric PORT and CH 1-16 selections until Connect, Clear removes the route, and the saved project/IPC values agree. Confirm the topmost toggle changes z-order and remains active across editor recreation.
 - Confirm parameter rows keep the name/value line above a separate slider at minimum size and non-100% DPI; long names must ellipsize rather than overlap.
+- Confirm the topmost pin is centered and gray when off, changes to yellow when active, and toggles from a real pointer click.
+- While a real VST GUI is open, click its virtual keyboard and confirm audible/nonzero output. The process probe must report zero missed audio blocks and a zero longest-miss run after warm-up; compare the same measured interaction before and after thread-boundary changes.

@@ -20,6 +20,8 @@ Use this reference for RML/RCSS implementation and layout diagnosis.
 - Any element can establish a stacking level with `z-index`. Keep a small documented layer scale instead of escalating arbitrary values.
 - Font files must be loaded from C++ before documents using them are loaded. RCSS accepts one font family rather than a comma-separated browser fallback list.
 - The host must obtain platform scaling and call `Context::SetDensityIndependentPixelRatio`. The context dimensions, renderer viewport, scissor conversion, and pointer coordinates must describe the same logical/physical geometry.
+- RmlUi's SVG support is an optional plug-in. Enable `RMLUI_SVG_PLUGIN` before adding RmlUi, provide its LunaSVG target, and initialize the plug-in before loading documents that contain SVG. Inline SVG is still strict XML and should have a definite `viewBox`, width, and height.
+- Tint an RmlUi SVG image with `image-color`, not the text `color` property. Put the active state on the owning control and style the descendant SVG for off, hover, and active colors. Icon-only controls need an explicit square hit target, definite icon geometry, and an accessible name such as `title`.
 
 ## Stable application shell
 
@@ -73,6 +75,8 @@ Prefer RmlUi data models for view state and two-way form values:
 - keep commands as named callbacks rather than parsing presentation text.
 
 For rapidly changing playback position or meters, update stable element properties or a compact bound state. Do not call `SetInnerRML` on an enclosing page every frame. Recreating the node that owns text input, drag capture, hover, or scroll is a likely cause of blinking and interrupted gestures.
+
+When RmlUi shares a process with a real-time plug-in host, keep event dispatch, `Context::Update`, rendering, and frame presentation on the UI thread. Presentation can wait for vertical sync and must never delay audio requests. Move audio request handling to a dedicated high-priority thread and cross the boundary with a bounded command queue or retained latest value. If the audio side cannot acquire a UI-owned parameter lock immediately, defer that update instead of blocking the audio block.
 
 During a drag, capture the pointer if the backend supports it, retain a drag-session record, update continuously from mouse movement, and release on button-up/cancel/focus loss. Snap musical values after coordinate conversion; do not snap raw screen pixels.
 

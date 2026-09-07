@@ -25,7 +25,7 @@ Build RmlUi interfaces whose structure, appearance, state, and interaction remai
    - renderer/platform code owns framebuffer size, DPI ratio, input translation, and scissoring.
 4. Prefer stable elements and targeted property/text/data-model updates. Rebuilding a large subtree during playback, dragging, metering, or text entry is a last resort because it loses hover/focus/capture/scroll state and can flicker.
 5. For dynamic collections, give items stable application IDs. Preserve selection, focus, pointer capture, and scroll position across necessary rebuilds.
-6. Keep UI work and document mutation off the real-time audio thread. Transfer snapshots or commands across a defined boundary.
+6. Keep UI work, document mutation, renderer calls, and presentation off the real-time audio thread. A graphics present call may wait for vertical sync even when the document is unchanged. Transfer snapshots or commands across a defined non-blocking boundary and let the audio side defer UI changes instead of waiting for a UI-owned lock.
 7. Build, launch the real executable, exercise the affected interaction, and inspect screenshots at the required states and sizes. A successful compile is not visual verification.
 
 ## Non-negotiable layout checks
